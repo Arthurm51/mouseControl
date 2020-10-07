@@ -1,6 +1,9 @@
-#importando as libs cv2 e numpy
+#importando as libs cv2, numpy e pyautogui
 from cv2 import cv2
 import numpy as np
+import pyautogui
+
+mover = 0
 
 #abrindo a camera
 camera = cv2.VideoCapture(0)
@@ -29,12 +32,15 @@ while True:
     #for para trabalhar com os contornos
     for contornoYellow in contornosYellow:
         # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
-        (x, y, w, h) = cv2.boundingRect(contornoYellow)
+        (xYellow, yYellow, wYellow, hYellow) = cv2.boundingRect(contornoYellow)
         #define a variavel "area" com os contornos
         areaYellow = cv2.contourArea(contornoYellow)
         #faz alguma coisa se a area for maior que 1000
         if areaYellow > 1000:
-            pass
+            mover = 1
+        if mover == 1:
+            pyautogui.moveTo(xYellow,yYellow)
+        mover = 0
 
     #declarações das variaveis da cor verde
     lowerGreen = np.array([50, 68, 68])
@@ -75,7 +81,7 @@ while True:
     #faz o contorno do objeto vermelho
     contornosRed, _ = cv2.findContours(
         threshRed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-        
+
     #for para trabalhar com os contornos
     for contornoRed in contornosRed:
         # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
