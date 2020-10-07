@@ -5,9 +5,7 @@ import numpy as np
 #abrindo a camera
 camera = cv2.VideoCapture(0)
 
-
 #looping "infinito", até cancelado
-
 while True:
     #pega o frame da camera
     _, frame = camera.read()
@@ -77,7 +75,7 @@ while True:
     #faz o contorno do objeto vermelho
     contornosRed, _ = cv2.findContours(
         threshRed, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-
+        
     #for para trabalhar com os contornos
     for contornoRed in contornosRed:
         # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
@@ -86,10 +84,8 @@ while True:
         areaRed = cv2.contourArea(contornoRed)
         #faz alguma coisa se a area for maior que 1000
         if areaRed > 1000:
-            
+            pass
 
-
-    #mostra a camera
     cv2.imshow("Camera", frame)
     key = cv2.waitKey(60)
     #se a tecla esc for clicada, derruba o codigo
