@@ -1,17 +1,19 @@
-#importando as libs cv2, numpy e pyautogui
+#importando as libs cv2, numpy e pyautogui juntamente com a função moveTo
 from cv2 import cv2
 import numpy as np
 import pyautogui
-
-mover = 0
+from pyautogui import moveTo
 
 #abrindo a camera
 camera = cv2.VideoCapture(0)
-
-#looping "infinito", até cancelado
+#criação da variavel para derrubar o programa
+acabar = 0
+#looping "infinito", até ser cancelado
 while True:
     #pega o frame da camera
-    _, frame = camera.read()
+    _, frameInv = camera.read()
+    #inverte a camera
+    frame = cv2.flip(frameInv, 1)
     #transforma o frame em formato HSV
     frameHsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     #declarações das variaveis da cor amarela
@@ -35,37 +37,36 @@ while True:
         (xYellow, yYellow, wYellow, hYellow) = cv2.boundingRect(contornoYellow)
         #define a variavel "area" com os contornos
         areaYellow = cv2.contourArea(contornoYellow)
-        #faz alguma coisa se a area for maior que 1000
-        if areaYellow > 1000:
-            mover = 1
-        if mover == 1:
+        #analisa se a area em amarelo é maior que 2000 e se for, usa ela como mouse.
+        if areaYellow > 2000:       
             pyautogui.moveTo(xYellow,yYellow)
-        mover = 0
+        
 
-    #declarações das variaveis da cor verde
-    lowerGreen = np.array([50, 68, 68])
-    upperGreen = np.array([255, 255, 255])
-    #cria a mascara em preto e branco para captar somente a cor verde no frame
-    mascaraGreen = cv2.inRange(frameHsv, lowerGreen, upperGreen)
-    #devolve a cor verde apenas
-    resultadoGreen = cv2.bitwise_and(frame, frame, mask=mascaraGreen)
+    #declarações das variaveis da cor roxa
+    lowerPurple = np.array([104, 54, 105])
+    upperPurple = np.array([255, 255, 255])
+    #cria a mascara em preto e branco para captar somente a cor roxa no frame
+    mascaraPurple = cv2.inRange(frameHsv, lowerPurple, upperPurple)
+    #devolve a cor roxa apenas
+    resultadoPurple = cv2.bitwise_and(frame, frame, mask=mascaraPurple)
     #deixa a imagem em tons de cinza
-    frameGrayGreen = cv2.cvtColor(resultadoGreen, cv2.COLOR_BGR2GRAY)
+    frameGrayPurple = cv2.cvtColor(resultadoPurple, cv2.COLOR_BGR2GRAY)
     #deixa a imagem melhor, menos poluida
-    _, threshGreen = cv2.threshold(frameGrayGreen, 3, 255, cv2.THRESH_BINARY)
-    #faz o contorno do objeto verde
-    contornosGreen, _ = cv2.findContours(
-        threshGreen, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+    _, threshPurple = cv2.threshold(frameGrayPurple, 3, 255, cv2.THRESH_BINARY)
+    #faz o contorno do objeto roxo
+    contornosPurple, _ = cv2.findContours(
+        threshPurple, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
 
     #for para trabalhar com os contornos
-    for contornoGreen in contornosGreen:
+    for contornoPurple in contornosPurple:
         # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
-        (x, y, w, h) = cv2.boundingRect(contornoGreen)
+        (xPurple, yPurple, wPurple, hPurple) = cv2.boundingRect(contornoPurple)
         #define a variavel "area" com os contornos
-        areaGreen = cv2.contourArea(contornoGreen)
-        #faz alguma coisa se a area for maior que 1000
-        if areaGreen > 1000:
-            pass
+        areaPurple = cv2.contourArea(contornoPurple)
+        #analisa se a area roxa é maior que 1000, se for, da um clique com o botão direito nas posições x e y da area amarela, no caso o mouse.
+        if areaPurple > 1000:
+            pyautogui.click(xYellow,yYellow,button='right')
+        
 
     #declarações das variaveis da cor vermelha
     lowerRed = np.array([0, 139, 164])
@@ -85,17 +86,47 @@ while True:
     #for para trabalhar com os contornos
     for contornoRed in contornosRed:
         # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
-        (x, y, w, h) = cv2.boundingRect(contornoRed)
+        (xRed, yRed, wRed, hRed) = cv2.boundingRect(contornoRed)
         #define a variavel "area" com os contornos
         areaRed = cv2.contourArea(contornoRed)
-        #faz alguma coisa se a area for maior que 1000
+        #analisa se a area vermelha é maior que 1000, se for, da um clique com o botão esquerdo nas posições x e y da area amarela, no caso o mouse.
         if areaRed > 1000:
-            pass
+            pyautogui.click(xYellow,yYellow,button='left')
 
+    #declarações das variaveis da cor rosa
+    lowerPink = np.array([164, 66, 0])
+    upperPink = np.array([255, 255, 255])
+    #cria a mascara em preto e branco para captar somente a cor rosa no frame
+    mascaraPink = cv2.inRange(frameHsv, lowerPink, upperPink)
+    #devolve a cor rosa apenas
+    resultadoPink = cv2.bitwise_and(frame, frame, mask=mascaraPink)
+    #deixa a imagem em tons de cinza
+    frameGrayPink = cv2.cvtColor(resultadoPink, cv2.COLOR_BGR2GRAY)
+    #deixa a imagem melhor, menos poluida
+    _, threshPink = cv2.threshold(frameGrayPink, 3, 255, cv2.THRESH_BINARY)
+    #faz o contorno do objeto rosa
+    contornosPink, _ = cv2.findContours(
+        threshPink, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
+    
+    
+    
+    #for para trabalhar com os contornos
+    for contornoPink in contornosPink:
+        # boundingRect retorna o ponto inicial de x, y e os tamanhos de largura e altura
+        (xPink, yPink, wPink, hPink) = cv2.boundingRect(contornoPink)
+        #define a variavel "area" com os contornos
+        areaPink = cv2.contourArea(contornoPink)
+        #Caso apareça a cor rosa, a variavel acabar será igual a um e ela acaba com o programa.
+        if areaPink > 1000:
+            acabar = 1
+            
+    #mostra o frame na camera
     cv2.imshow("Camera", frame)
+    #atualiza a camera a 60 fps
     key = cv2.waitKey(60)
-    #se a tecla esc for clicada, derruba o codigo
-    if key == 27:
+    #se a variavel acabar for igual a 1, acaba o programa
+    if acabar == 1:
         break
 
 
